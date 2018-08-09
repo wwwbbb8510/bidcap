@@ -14,6 +14,11 @@ Benchmark Image Dataset Collection And Preprocessing
 
 ## Usage of the package
 
+### download the datasets
+
+Download the datasets and put the files under the root directory of your project as shown in the following picture. 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Datasets file structure")
+
 ### Load the datasets
 ```python
 # import the loader tool
