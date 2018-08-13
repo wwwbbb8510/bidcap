@@ -18,7 +18,7 @@ Benchmark Image Dataset Collection And Preprocessing
 
 Download the datasets and put the files under the root directory of your project as shown in the following picture. 
 
-![alt text](https://github.com/wwwbbb8510/bidcap/blob/master/dataset_file_structure.PNG "Datasets file structure")
+![dataset folder structure](https://github.com/wwwbbb8510/bidcap/blob/master/dataset_file_structure.PNG "Datasets file structure")
 
 ### Load the datasets
 ```python
