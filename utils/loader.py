@@ -41,3 +41,7 @@ class ImagesetLoader(object):
                 raise Exception('{} dataset do not exists'.format(dataset_name))
             ImagesetLoader._instances[instance_key] = ImagesetLoader._dataset_classes[dataset_name](**kwargs).load()
         return ImagesetLoader._instances[instance_key]
+
+    @staticmethod
+    def dataset_classes():
+        return ImagesetLoader._dataset_classes

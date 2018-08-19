@@ -6,10 +6,10 @@ class CONVEX(Dataset):
     """
     Convex dataset
     """
-    def __init__(self, dataset_folder='datasets', **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
         super(CONVEX, self).__init__(**kwargs)
 
-        self.image_shape = (28, 28)
+        self.image_shape = image_shape
         self.train_path = os.path.join(dataset_folder, 'convex',
                                        'convex_train.amat') \
             if self.train_path is None else self.train_path
