@@ -14,7 +14,7 @@ class MB(Dataset):
                                        'mnist_train.amat') \
             if self.train_path is None else self.train_path
         self.test_path = os.path.join(dataset_folder, 'mnist',
-                                      'mnist_train.amat') \
+                                      'mnist_test.amat') \
             if self.test_path is None else self.test_path
 
 
