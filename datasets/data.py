@@ -244,7 +244,7 @@ class BatchDataset(Dataset):
             data = pickle.load(fo, encoding='bytes')
 
         images = data[self.data_key]
-        labels = data[self.labels_key]
+        labels = np.array(data[self.labels_key])
 
         if self.mode is not None and self.mode == 0:
             images = images[0:1000, :]
