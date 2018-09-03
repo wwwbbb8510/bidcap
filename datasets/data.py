@@ -1,6 +1,8 @@
 import numpy as np
 import logging
 import os
+import pickle
+from sklearn.model_selection import train_test_split
 
 
 class Dataset(object):
@@ -39,7 +41,7 @@ class Dataset(object):
         if self.train_path is not None:
             # only load training data from file once
             if self.train is None:
-                self._train = self._load_txt_image_data_with_label_at_end(self.train_path)
+                self._train = self._load_train_image_data_from_file(self.train_path)
 
         # only split the training data once
         if self.validation is None and self.train is not None \
@@ -58,14 +60,35 @@ class Dataset(object):
         if self.test_path is not None:
             # only load test data from file once
             if self._test is None:
-                self._test = self._load_txt_image_data_with_label_at_end(self.test_path)
+                self._test = self._load_test_image_data_from_file(self.test_path)
 
         logging.debug('Loaded Dataset:{}'.format(self))
         return self
 
-    def _load_txt_image_data_with_label_at_end(self, path):
+    def _load_test_image_data_from_file(self, path):
+        """
+        load test image data from file
+        this method will be overridden by sub classses
+        :param path: the path where the dataset resides
+        :type path: str
+        :return:
+        """
+        return self._load_image_data_from_file(path)
+
+    def _load_train_image_data_from_file(self, path):
+        """
+        load training image data from file
+        this method will be overridden by sub classses
+        :param path: the path where the dataset resides
+        :type path: str
+        :return:
+        """
+        return self._load_image_data_from_file(path)
+
+    def _load_image_data_from_file(self, path):
         """
         load text image data with label at the end of each row
+        this method will be overridden by sub classses
         :param path: the path where the dataset resides
         :type path: str
         :return:
@@ -160,3 +183,112 @@ class Dataset(object):
     @train_validation_split_point.setter
     def train_validation_split_point(self, train_validation_split_point):
         self._train_validation_split_point = train_validation_split_point
+
+
+class BatchDataset(Dataset):
+    def __init__(self, batch_num=5, **kwargs):
+        """
+        init Dataset object
+        :param batch_num: total batch number of the batch dataset
+        :type batch_num: int
+        :param train_path: the path where the training dataset reside
+        :type train_path: str
+        :param test_path: the path where the test dataset reside
+        :type test_path: str
+        :param image_shape: the image shape
+        :type image_shape: tuple
+        :param train_validation_split_point: the point where the training set is split into training and validation sets
+        :type train_validation_split_point: int
+        :param mode: running mode - 1:production, 0/None: debug
+        :type mode: int
+        :param partial_dataset_ratio: The percentage of the partial dataset loaded
+        :type partial_dataset_ratio: float
+        """
+        self._batch_num = batch_num
+        self._data_key = 'data'.encode()
+        self._labels_key = 'labels'.encode()
+        self._seed = 42
+        super(BatchDataset, self).__init__(**kwargs)
+
+    def _load_train_image_data_from_file(self, path):
+        """
+        load training image data from file
+        this method will be overridden by sub classses
+        :param path: the path where the dataset resides
+        :type path: str
+        :return:
+        """
+        loaded_images = []
+        loaded_labels = []
+        batch_num_to_load = 1 if self.mode is not None and self.mode == 0 else self.batch_num
+        for i in range(batch_num_to_load):
+            batch_id = i + 1
+            curr_data = self._load_image_data_from_file(path + '_' + str(batch_id))
+            loaded_images.append(curr_data['images'])
+            loaded_labels.append(curr_data['labels'])
+
+        return {
+            'images': np.concatenate(loaded_images),
+            'labels': np.concatenate(loaded_labels)
+        }
+
+    def _load_image_data_from_file(self, path):
+        """
+        load text image data with label at the end of each row
+        this method will be overridden by sub classses
+        :param path: the path where the dataset resides
+        :type path: str
+        :return:
+        """
+        with open(path, 'rb') as fo:
+            data = pickle.load(fo, encoding='bytes')
+
+        images = data[self.data_key]
+        labels = data[self.labels_key]
+
+        if self.mode is not None and self.mode == 0:
+            images = images[0:1000, :]
+            labels = labels[0:1000]
+        elif self.partial_dataset_ratio is not None and 0.0 < self.partial_dataset_ratio < 1.0:
+            # randomly pick partial dataset
+            images, _, labels, _ = train_test_split(images, labels, test_size=1 - self.partial_dataset_ratio,
+                                                    random_state=self.seed)
+
+        images = np.reshape(images, (-1,) + self.image_shape)
+
+        return {
+            'images': images,
+            'labels': labels
+        }
+
+    @property
+    def batch_num(self):
+        return self._batch_num
+
+    @batch_num.setter
+    def batch_num(self, batch_num):
+        self._batch_num = batch_num
+
+    @property
+    def data_key(self):
+        return self._data_key
+
+    @data_key.setter
+    def data_key(self, data_key):
+        self._data_key = data_key
+
+    @property
+    def labels_key(self):
+        return self._labels_key
+
+    @labels_key.setter
+    def labels_key(self, labels_key):
+        self._labels_key = labels_key
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, seed):
+        self._seed = seed

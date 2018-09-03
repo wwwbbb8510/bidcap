@@ -1,5 +1,6 @@
 from ..datasets import mnist
 from ..datasets import convex
+from ..datasets import cifar
 from ..datasets.data import Dataset
 
 
@@ -17,6 +18,7 @@ class ImagesetLoader(object):
         'mrb': mnist.MRB,
         'mrd': mnist.MRD,
         'convex': convex.CONVEX,
+        'cifar10': cifar.CIFAR10,
     }
 
     @staticmethod

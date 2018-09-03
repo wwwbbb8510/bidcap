@@ -7,7 +7,7 @@ class MB(Dataset):
     MNIST basic
     """
 
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(MB, self).__init__(**kwargs)
         self.image_shape = image_shape
         self.train_path = os.path.join(dataset_folder, 'mnist',
@@ -23,7 +23,7 @@ class MBI(Dataset):
     MNIST with background images
     """
 
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(MBI, self).__init__(**kwargs)
         self.image_shape = image_shape
         self.train_path = os.path.join(dataset_folder, 'mnist_background_images',
@@ -39,7 +39,7 @@ class MDRBI(Dataset):
     MNIST digits with rotation and background images
     """
 
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(MDRBI, self).__init__(**kwargs)
         self.image_shape = image_shape
         self.train_path = os.path.join(dataset_folder, 'mnist_rotation_back_image_new',
@@ -55,7 +55,7 @@ class MRB(Dataset):
     MNIST with random background
     """
 
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(MRB, self).__init__(**kwargs)
 
         self.image_shape = image_shape
@@ -71,7 +71,7 @@ class MRD(Dataset):
     MNIST with rotated digits
     """
 
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(MRD, self).__init__(**kwargs)
 
         self.image_shape = image_shape

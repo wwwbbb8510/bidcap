@@ -6,7 +6,7 @@ class CONVEX(Dataset):
     """
     Convex dataset
     """
-    def __init__(self, dataset_folder='datasets', image_shape=(28, 28), **kwargs):
+    def __init__(self, dataset_folder='datasets', image_shape=(1, 28, 28), **kwargs):
         super(CONVEX, self).__init__(**kwargs)
 
         self.image_shape = image_shape
