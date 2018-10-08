@@ -74,6 +74,7 @@ class Dataset(object):
                     'images': split_validation_images,
                     'labels': split_validation_labels
                 }
+                logging.debug('===train validation reshuffled===')
             self._train = split_train
             self._validation = split_validation
 
