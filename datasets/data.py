@@ -37,6 +37,10 @@ class Dataset(object):
         self._validation = None
         self._test = None
 
+        # whether to reshuffle train validation split
+        self._train_validation_reshuffle = False
+        self._train_validation_random_seed = 42
+
     def load(self):
         if self.train_path is not None:
             # only load training data from file once
@@ -46,14 +50,30 @@ class Dataset(object):
         # only split the training data once
         if self.validation is None and self.train is not None \
                 and self.train_validation_split_point is not None and self.train_validation_split_point > 0:
-            split_train = {
-                'images': self.train['images'][0:self.train_validation_split_point, :, :, :],
-                'labels': self.train['labels'][0:self.train_validation_split_point]
-            }
-            split_validation = {
-                'images': self.train['images'][self.train_validation_split_point:, :, :, :],
-                'labels': self.train['labels'][self.train_validation_split_point:]
-            }
+            if not self.train_validation_reshuffle:
+                # do not reshuffle
+                split_train = {
+                    'images': self.train['images'][0:self.train_validation_split_point, :, :, :],
+                    'labels': self.train['labels'][0:self.train_validation_split_point]
+                }
+                split_validation = {
+                    'images': self.train['images'][self.train_validation_split_point:, :, :, :],
+                    'labels': self.train['labels'][self.train_validation_split_point:]
+                }
+            else:
+                # reshuffle
+                validation_size = 1 - self.train_validation_split_point / self.train['images'].shape[0]
+                split_train_images, split_validation_images, split_train_labels, split_validation_labels = train_test_split(
+                    self.train['images'], self.train['labels'], test_size=validation_size,
+                    random_state=self.train_validation_random_seed)
+                split_train = {
+                    'images': split_train_images,
+                    'labels': split_train_labels
+                }
+                split_validation = {
+                    'images': split_validation_images,
+                    'labels': split_validation_labels
+                }
             self._train = split_train
             self._validation = split_validation
 
@@ -184,6 +204,22 @@ class Dataset(object):
     def train_validation_split_point(self, train_validation_split_point):
         self._train_validation_split_point = train_validation_split_point
 
+    @property
+    def train_validation_reshuffle(self):
+        return self._train_validation_reshuffle
+
+    @train_validation_reshuffle.setter
+    def train_validation_reshuffle(self, train_validation_reshuffle):
+        self._train_validation_reshuffle = train_validation_reshuffle
+
+    @property
+    def train_validation_random_seed(self):
+        return self._train_validation_random_seed
+
+    @train_validation_random_seed.setter
+    def train_validation_random_seed(self, train_validation_random_seed):
+        self._train_validation_random_seed = train_validation_random_seed
+
 
 class BatchDataset(Dataset):
     def __init__(self, batch_num=5, **kwargs):
@@ -209,6 +245,7 @@ class BatchDataset(Dataset):
         self._labels_key = 'labels'.encode()
         self._seed = 42
         super(BatchDataset, self).__init__(**kwargs)
+        self.train_validation_reshuffle = True
 
     def _load_train_image_data_from_file(self, path):
         """
