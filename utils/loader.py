@@ -33,7 +33,7 @@ class ImagesetLoader(object):
         :rtype: Dataset
         """
         partial_dataset_ratio = kwargs[
-            'train_validation_split_point'] if 'train_validation_split_point' in kwargs else 0
+            'partial_dataset_ratio'] if 'partial_dataset_ratio' in kwargs else 0
         train_validation_split_point = kwargs[
             'train_validation_split_point'] if 'train_validation_split_point' in kwargs else 0
         instance_key = dataset_name + '_' + str(partial_dataset_ratio) + '_' + str(train_validation_split_point)
