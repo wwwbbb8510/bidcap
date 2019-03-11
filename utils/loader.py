@@ -1,3 +1,8 @@
+from torchvision import transforms
+import torchvision
+import torch
+import logging
+
 from ..datasets import mnist
 from ..datasets import convex
 from ..datasets import cifar
@@ -47,3 +52,29 @@ class ImagesetLoader(object):
     @staticmethod
     def dataset_classes():
         return ImagesetLoader._dataset_classes
+
+def torch_vision_load_cifar10(is_aug):
+    torch_cifar10_root = 'datasets'
+    if is_aug == 1:
+        logging.debug('---use data augmentation---')
+        train_transform_cifar10 = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    else:
+        logging.debug('---do not use data augmentation---')
+        train_transform_cifar10 = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    test_transform_cifar10 = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    train_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=True, transform=train_transform_cifar10)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=False, transform=test_transform_cifar10)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
