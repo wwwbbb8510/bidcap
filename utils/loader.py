@@ -2,6 +2,8 @@ from torchvision import transforms
 import torchvision
 import torch
 import logging
+from torch.utils.data import DataLoader, SubsetRandomSampler
+import numpy as np
 
 from ..datasets import mnist
 from ..datasets import convex
@@ -53,6 +55,7 @@ class ImagesetLoader(object):
     def dataset_classes():
         return ImagesetLoader._dataset_classes
 
+
 def torch_vision_load_cifar10(is_aug):
     torch_cifar10_root = 'datasets'
     if is_aug == 1:
@@ -78,3 +81,26 @@ def torch_vision_load_cifar10(is_aug):
     test_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=False, transform=test_transform_cifar10)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
+
+
+def torch_vision_split_cifar10(data_loader, split_point, random_seed=1, batch_sizes=None):
+    """
+    split one data loader to two
+    :param data_loader: pytorch data loader
+    :type data_loader: DataLoader
+    :param split_point: split point where the data is split into two
+    :type split_point: int
+    :return: split data loaders
+    """
+    num_data = len(data_loader.dataset)
+    indices = list(range(num_data))
+    np.random.seed(random_seed)
+    np.random.shuffle(indices)
+    first_batch_size, second_batch_size = batch_sizes if type(batch_sizes) == tuple and len(batch_sizes) == 2 else (
+        data_loader.batch_size, data_loader.batch_size)
+    first_set_idx, second_set_idx = indices[:split_point], indices[split_point:]
+    first_dataset = torch.utils.data.Subset(data_loader.dataset, first_set_idx)
+    second_dataset = torch.utils.data.Subset(data_loader.dataset, second_set_idx)
+    first_set_loader = torch.utils.data.DataLoader(first_dataset, batch_size=first_batch_size, shuffle=True)
+    second_set_loader = torch.utils.data.DataLoader(second_dataset, batch_size=second_batch_size, shuffle=True)
+    return first_set_loader, second_set_loader
