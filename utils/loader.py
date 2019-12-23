@@ -83,6 +83,122 @@ def torch_vision_load_cifar10(is_aug):
     return (train_loader, test_loader)
 
 
+def torch_vision_load_cifar100(is_aug):
+    torch_cifar100_root = 'datasets'
+    if is_aug == 1:
+        logging.debug('---use data augmentation---')
+        train_transform_cifar100 = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+        ])
+    else:
+        logging.debug('---do not use data augmentation---')
+        train_transform_cifar100 = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+        ])
+    test_transform_cifar100 = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+    ])
+    train_dataset = torchvision.datasets.CIFAR100(root=torch_cifar100_root, train=True,
+                                                  transform=train_transform_cifar100)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.CIFAR100(root=torch_cifar100_root, train=False,
+                                                 transform=test_transform_cifar100)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
+def torch_vision_load_svhn(is_aug):
+    torch_svhn_root = 'datasets'
+    if is_aug == 1:
+        logging.debug('---use data augmentation---')
+        train_transform_svhn = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+        ])
+    else:
+        logging.debug('---do not use data augmentation---')
+        train_transform_svhn = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+        ])
+    test_transform_svhn = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+    ])
+    train_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, train=True,
+                                              transform=train_transform_svhn)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, train=False,
+                                             transform=test_transform_svhn)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
+def torch_vision_load_stl10(is_aug):
+    torch_stl10_root = 'datasets'
+    if is_aug == 1:
+        logging.debug('---use data augmentation---')
+        train_transform_stl10 = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+        ])
+    else:
+        logging.debug('---do not use data augmentation---')
+        train_transform_stl10 = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+        ])
+    test_transform_stl10 = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+    ])
+    train_dataset = torchvision.datasets.STL10(root=torch_stl10_root, train=True,
+                                               transform=train_transform_stl10)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.STL10(root=torch_stl10_root, train=False,
+                                              transform=test_transform_stl10)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
+def torch_vision_load_imagenet(is_aug):
+    torch_imagenet_root = 'datasets'
+    if is_aug == 1:
+        logging.debug('---use data augmentation---')
+        train_transform_imagenet = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+    else:
+        logging.debug('---do not use data augmentation---')
+        train_transform_imagenet = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+    test_transform_imagenet = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    train_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, train=True,
+                                                  transform=train_transform_imagenet)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.CIFAR10(root=torch_imagenet_root, train=False,
+                                                transform=test_transform_imagenet)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
 def torch_vision_split_cifar10(data_loader, split_point, random_seed=1, batch_sizes=None):
     """
     split one data loader to two
