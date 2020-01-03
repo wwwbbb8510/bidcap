@@ -113,29 +113,29 @@ def torch_vision_load_cifar100(is_aug):
 
 
 def torch_vision_load_svhn(is_aug):
-    torch_svhn_root = 'datasets'
+    torch_svhn_root = 'datasets/svhn'
     if is_aug == 1:
         logging.debug('---use data augmentation---')
         train_transform_svhn = transforms.Compose([
             transforms.RandomCrop(32, padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ])
     else:
         logging.debug('---do not use data augmentation---')
         train_transform_svhn = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ])
     test_transform_svhn = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.3, 0.3, 0.3)),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     ])
-    train_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, train=True,
+    train_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='train',
                                               transform=train_transform_svhn)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, train=False,
+    test_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='test',
                                              transform=test_transform_svhn)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
