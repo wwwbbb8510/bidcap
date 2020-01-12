@@ -2,7 +2,7 @@ from torchvision import transforms
 import torchvision
 import torch
 import logging
-from torch.utils.data import DataLoader, SubsetRandomSampler
+from torch.utils.data import DataLoader, SubsetRandomSampler, ConcatDataset
 import numpy as np
 
 from ..datasets import mnist
@@ -112,7 +112,7 @@ def torch_vision_load_cifar100(is_aug):
     return (train_loader, test_loader)
 
 
-def torch_vision_load_svhn(is_aug):
+def torch_vision_load_svhn(is_aug, with_extra=True):
     torch_svhn_root = 'datasets/svhn'
     if is_aug == 1:
         logging.debug('---use data augmentation---')
@@ -134,6 +134,10 @@ def torch_vision_load_svhn(is_aug):
     ])
     train_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='train',
                                               transform=train_transform_svhn)
+    if with_extra:
+        extra_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='extra',
+                                                  transform=train_transform_svhn)
+        train_dataset = ConcatDataset([train_dataset, extra_dataset])
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='test',
                                              transform=test_transform_svhn)
