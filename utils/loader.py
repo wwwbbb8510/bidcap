@@ -174,8 +174,8 @@ def torch_vision_load_stl10(is_aug):
     return (train_loader, test_loader)
 
 
-def torch_vision_load_imagenet(is_aug):
-    torch_imagenet_root = 'datasets'
+def torch_vision_load_imagenet(is_aug, download=False):
+    torch_imagenet_root = 'datasets/imagenet/ILSVRC2012'
     if is_aug == 1:
         logging.debug('---use data augmentation---')
         train_transform_imagenet = transforms.Compose([
@@ -194,11 +194,11 @@ def torch_vision_load_imagenet(is_aug):
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
-    train_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, train=True,
-                                                  transform=train_transform_imagenet)
+    train_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='train',
+                                                  transform=train_transform_imagenet, download=download)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_dataset = torchvision.datasets.CIFAR10(root=torch_imagenet_root, train=False,
-                                                transform=test_transform_imagenet)
+    test_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='val',
+                                                 transform=test_transform_imagenet, download=download)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
