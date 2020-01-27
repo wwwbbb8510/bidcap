@@ -198,10 +198,10 @@ def torch_vision_load_imagenet(is_aug, download=False):
     ])
     train_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='train',
                                                   transform=train_transform_imagenet, download=download)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=256, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='val',
                                                  transform=test_transform_imagenet, download=download)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=500, shuffle=False)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
 
