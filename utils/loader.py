@@ -92,7 +92,7 @@ def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=N
             rank=rank
         )
         train_shuffle = False
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True, sampler=train_sampler)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=train_shuffle, sampler=train_sampler)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False, sampler=test_sampler)
     return train_loader, test_loader
 
