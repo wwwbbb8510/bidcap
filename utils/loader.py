@@ -56,7 +56,7 @@ class ImagesetLoader(object):
         return ImagesetLoader._dataset_classes
 
 
-def torch_vision_load_cifar10(is_aug):
+def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=None):
     torch_cifar10_root = 'datasets'
     if is_aug == 1:
         logging.debug('---use data augmentation---')
@@ -77,10 +77,22 @@ def torch_vision_load_cifar10(is_aug):
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
     train_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=True, transform=train_transform_cifar10)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=False, transform=test_transform_cifar10)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
-    return (train_loader, test_loader)
+    train_sampler, test_sampler = None, None
+    if distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(
+            train_dataset,
+            num_replicas=world_size,
+            rank=rank
+        )
+        test_sampler = torch.utils.data.distributed.DistributedSampler(
+            test_dataset,
+            num_replicas=world_size,
+            rank=rank
+        )
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True, sampler=train_sampler)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False, sampler=test_sampler)
+    return train_loader, test_loader
 
 
 def torch_vision_load_cifar100(is_aug):
