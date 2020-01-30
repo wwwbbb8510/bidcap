@@ -215,6 +215,8 @@ def torch_vision_load_imagenet(is_aug, download=False, distributed=False, world_
                                                   transform=train_transform_imagenet, download=download)
     test_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='val',
                                                  transform=test_transform_imagenet, download=download)
+    train_sampler, test_sampler = None, None
+    train_shuffle = True
     if distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(
             train_dataset,
