@@ -78,7 +78,7 @@ def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=N
     ])
     train_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=True, transform=train_transform_cifar10)
     test_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=False, transform=test_transform_cifar10)
-    train_sampler, test_sampler = None, None
+    train_sampler = None
     train_shuffle = True
     if distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(
@@ -86,15 +86,10 @@ def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=N
             num_replicas=world_size,
             rank=rank
         )
-        test_sampler = torch.utils.data.distributed.DistributedSampler(
-            test_dataset,
-            num_replicas=world_size,
-            rank=rank
-        )
         train_shuffle = False
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=train_shuffle,
                                                sampler=train_sampler)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False, sampler=test_sampler)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return train_loader, test_loader
 
 
@@ -215,7 +210,7 @@ def torch_vision_load_imagenet(is_aug, download=False, distributed=False, world_
                                                   transform=train_transform_imagenet, download=download)
     test_dataset = torchvision.datasets.ImageNet(root=torch_imagenet_root, split='val',
                                                  transform=test_transform_imagenet, download=download)
-    train_sampler, test_sampler = None, None
+    train_sampler = None
     train_shuffle = True
     if distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(
@@ -223,15 +218,10 @@ def torch_vision_load_imagenet(is_aug, download=False, distributed=False, world_
             num_replicas=world_size,
             rank=rank
         )
-        test_sampler = torch.utils.data.distributed.DistributedSampler(
-            test_dataset,
-            num_replicas=world_size,
-            rank=rank
-        )
         train_shuffle = False
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=train_shuffle,
                                                sampler=train_sampler)
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False, sampler=test_sampler)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return train_loader, test_loader
 
 
