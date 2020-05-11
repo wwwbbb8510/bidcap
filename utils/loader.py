@@ -9,6 +9,7 @@ from ..datasets import mnist
 from ..datasets import convex
 from ..datasets import cifar
 from ..datasets.data import Dataset
+from .cutout import cutout, normalize, to_tensor, DEFAULT_CUTOUT_CONFIG
 
 
 class ImagesetLoader(object):
@@ -56,25 +57,38 @@ class ImagesetLoader(object):
         return ImagesetLoader._dataset_classes
 
 
-def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=None):
+def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=None,
+                              use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
     torch_cifar10_root = 'datasets'
+    mean, std = (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
     if is_aug == 1:
         logging.debug('---use data augmentation---')
-        train_transform_cifar10 = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-        ])
+        if use_cutout:
+            train_transform_cifar10 = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                normalize(mean, std),
+                cutout(cutout_config['cutout_size'],
+                       cutout_config['cutout_prob'],
+                       cutout_config['cutout_inside']),
+                to_tensor(),
+            ])
+        else:
+            train_transform_cifar10 = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean, std),
+            ])
     else:
         logging.debug('---do not use data augmentation---')
         train_transform_cifar10 = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            transforms.Normalize(mean, std),
         ])
     test_transform_cifar10 = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize(mean, std),
     ])
     train_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=True, transform=train_transform_cifar10)
     test_dataset = torchvision.datasets.CIFAR10(root=torch_cifar10_root, train=False, transform=test_transform_cifar10)
@@ -93,25 +107,37 @@ def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=N
     return train_loader, test_loader
 
 
-def torch_vision_load_cifar100(is_aug):
+def torch_vision_load_cifar100(is_aug, use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
     torch_cifar100_root = 'datasets'
+    mean, std = (0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)
     if is_aug == 1:
         logging.debug('---use data augmentation---')
-        train_transform_cifar100 = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
-        ])
+        if use_cutout:
+            train_transform_cifar100 = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                normalize(mean, std),
+                cutout(cutout_config['cutout_size'],
+                       cutout_config['cutout_prob'],
+                       cutout_config['cutout_inside']),
+                to_tensor(),
+            ])
+        else:
+            train_transform_cifar100 = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean, std),
+            ])
     else:
         logging.debug('---do not use data augmentation---')
         train_transform_cifar100 = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+            transforms.Normalize(mean, std),
         ])
     test_transform_cifar100 = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+        transforms.Normalize(mean, std),
     ])
     train_dataset = torchvision.datasets.CIFAR100(root=torch_cifar100_root, train=True,
                                                   transform=train_transform_cifar100)
@@ -122,25 +148,38 @@ def torch_vision_load_cifar100(is_aug):
     return (train_loader, test_loader)
 
 
-def torch_vision_load_svhn(is_aug, with_extra=True):
+def torch_vision_load_svhn(is_aug, with_extra=True,
+                           use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
     torch_svhn_root = 'datasets/svhn'
+    mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
     if is_aug == 1:
         logging.debug('---use data augmentation---')
-        train_transform_svhn = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-        ])
+        if use_cutout:
+            train_transform_svhn = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                normalize(mean, std),
+                cutout(cutout_config['cutout_size'],
+                       cutout_config['cutout_prob'],
+                       cutout_config['cutout_inside']),
+                to_tensor(),
+            ])
+        else:
+            train_transform_svhn = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean, std),
+            ])
     else:
         logging.debug('---do not use data augmentation---')
         train_transform_svhn = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize(mean, std),
         ])
     test_transform_svhn = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        transforms.Normalize(mean, std),
     ])
     train_dataset = torchvision.datasets.SVHN(root=torch_svhn_root, split='train',
                                               transform=train_transform_svhn)
