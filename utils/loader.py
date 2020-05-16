@@ -9,7 +9,8 @@ from ..datasets import mnist
 from ..datasets import convex
 from ..datasets import cifar
 from ..datasets.data import Dataset
-from .cutout import cutout, normalize, to_tensor, DEFAULT_CUTOUT_CONFIG
+from .cutout import cutout, normalize, to_tensor, \
+    DEFAULT_CUTOUT_CONFIG_CIFAR10, DEFAULT_CUTOUT_CONFIG_CIFAR100, DEFAULT_CUTOUT_CONFIG_SVHN
 
 
 class ImagesetLoader(object):
@@ -58,7 +59,7 @@ class ImagesetLoader(object):
 
 
 def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=None,
-                              use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
+                              use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG_CIFAR10):
     torch_cifar10_root = 'datasets'
     mean, std = (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
     if is_aug == 1:
@@ -107,7 +108,7 @@ def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=N
     return train_loader, test_loader
 
 
-def torch_vision_load_cifar100(is_aug, use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
+def torch_vision_load_cifar100(is_aug, use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG_CIFAR100):
     torch_cifar100_root = 'datasets'
     mean, std = (0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)
     if is_aug == 1:
@@ -149,7 +150,7 @@ def torch_vision_load_cifar100(is_aug, use_cutout=False, cutout_config=DEFAULT_C
 
 
 def torch_vision_load_svhn(is_aug, with_extra=True,
-                           use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG):
+                           use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG_SVHN):
     torch_svhn_root = 'datasets/svhn'
     mean, std = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
     if is_aug == 1:

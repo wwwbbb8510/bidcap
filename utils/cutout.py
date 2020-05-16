@@ -2,8 +2,20 @@ import numpy as np
 
 import torch
 
-DEFAULT_CUTOUT_CONFIG = {
+DEFAULT_CUTOUT_CONFIG_CIFAR10 = {
     'cutout_size': 16,
+    'cutout_prob': 1,
+    'cutout_inside': False
+}
+
+DEFAULT_CUTOUT_CONFIG_CIFAR100 = {
+    'cutout_size': 8,
+    'cutout_prob': 1,
+    'cutout_inside': False
+}
+
+DEFAULT_CUTOUT_CONFIG_SVHN = {
+    'cutout_size': 20,
     'cutout_prob': 1,
     'cutout_inside': False
 }
