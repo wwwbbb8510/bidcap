@@ -58,6 +58,24 @@ class ImagesetLoader(object):
         return ImagesetLoader._dataset_classes
 
 
+def torch_vision_load_mnist():
+    torch_mnist_root = 'datasets'
+    train_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=True)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=False)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
+def torch_vision_load_fashion_mnist():
+    torch_mnist_root = 'datasets'
+    train_dataset = torchvision.datasets.FashionMNIST(root=torch_mnist_root, train=True)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_dataset = torchvision.datasets.FashionMNIST(root=torch_mnist_root, train=False)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
+    return (train_loader, test_loader)
+
+
 def torch_vision_load_cifar10(is_aug, distributed=False, world_size=None, rank=None,
                               use_cutout=False, cutout_config=DEFAULT_CUTOUT_CONFIG_CIFAR10):
     torch_cifar10_root = 'datasets'
