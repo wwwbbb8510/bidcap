@@ -60,18 +60,26 @@ class ImagesetLoader(object):
 
 def torch_vision_load_mnist():
     torch_mnist_root = 'datasets'
-    train_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=True)
+    mnist_transform = transforms.Compose([
+        transforms.ToTensor(),
+    ])
+    train_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=True, transform=mnist_transform)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=False)
+    test_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=False, transform=mnist_transform)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
 
 def torch_vision_load_fashion_mnist():
-    torch_mnist_root = 'datasets'
-    train_dataset = torchvision.datasets.FashionMNIST(root=torch_mnist_root, train=True)
+    torch_fashion_mnist_root = 'datasets'
+    fashion_mnist_transform = transforms.Compose([
+        transforms.ToTensor(),
+    ])
+    train_dataset = torchvision.datasets.FashionMNIST(root=torch_fashion_mnist_root, train=True,
+                                                      transform=fashion_mnist_transform)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_dataset = torchvision.datasets.FashionMNIST(root=torch_mnist_root, train=False)
+    test_dataset = torchvision.datasets.FashionMNIST(root=torch_fashion_mnist_root, train=False,
+                                                     transform=fashion_mnist_transform)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
