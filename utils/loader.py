@@ -2,7 +2,7 @@ from torchvision import transforms
 import torchvision
 import torch
 import logging
-from torch.utils.data import DataLoader, SubsetRandomSampler, ConcatDataset
+from torch.utils.data import DataLoader, random_split, ConcatDataset
 import numpy as np
 
 from ..datasets import mnist
@@ -58,28 +58,43 @@ class ImagesetLoader(object):
         return ImagesetLoader._dataset_classes
 
 
-def torch_vision_load_mnist():
+def extract_subset_from_dataset(dataset, subset_ratio, seed=100):
+    if 1 > subset_ratio > 0:
+        total_size = len(dataset)
+        used_size = int(total_size * subset_ratio)
+        dumped_size = total_size - used_size
+        subset, dumped_set = random_split(dataset, [used_size, dumped_size], torch.Generator().manual_seed(seed))
+        return subset
+    else:
+        return dataset
+
+
+def torch_vision_load_mnist(subset_ratio=1):
     torch_mnist_root = 'datasets'
     mnist_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
     train_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=True, transform=mnist_transform)
+    train_dataset = extract_subset_from_dataset(train_dataset, subset_ratio)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_dataset = torchvision.datasets.MNIST(root=torch_mnist_root, train=False, transform=mnist_transform)
+    test_dataset = extract_subset_from_dataset(test_dataset, subset_ratio)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
 
-def torch_vision_load_fashion_mnist():
+def torch_vision_load_fashion_mnist(subset_ratio=1):
     torch_fashion_mnist_root = 'datasets'
     fashion_mnist_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
     train_dataset = torchvision.datasets.FashionMNIST(root=torch_fashion_mnist_root, train=True,
                                                       transform=fashion_mnist_transform)
+    train_dataset = extract_subset_from_dataset(train_dataset, subset_ratio)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_dataset = torchvision.datasets.FashionMNIST(root=torch_fashion_mnist_root, train=False,
                                                      transform=fashion_mnist_transform)
+    test_dataset = extract_subset_from_dataset(test_dataset, subset_ratio)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
     return (train_loader, test_loader)
 
