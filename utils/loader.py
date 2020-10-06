@@ -63,7 +63,8 @@ def extract_subset_from_dataset(dataset, subset_ratio, seed=100):
         total_size = len(dataset)
         used_size = int(total_size * subset_ratio)
         dumped_size = total_size - used_size
-        subset, dumped_set = random_split(dataset, [used_size, dumped_size], torch.Generator().manual_seed(seed))
+        # subset, dumped_set = random_split(dataset, [used_size, dumped_size], torch.Generator().manual_seed(seed))
+        subset, dumped_set = random_split(dataset, [used_size, dumped_size])
         return subset
     else:
         return dataset
