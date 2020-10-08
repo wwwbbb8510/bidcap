@@ -59,6 +59,7 @@ class ImagesetLoader(object):
 
 
 def extract_subset_from_dataset(dataset, subset_ratio, seed=100):
+    torch.manual_seed(seed)
     if 1 > subset_ratio > 0:
         total_size = len(dataset)
         used_size = int(total_size * subset_ratio)
